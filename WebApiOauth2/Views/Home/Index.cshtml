@@ -1,0 +1,118 @@
+﻿@{
+    ViewBag.Title = "OAuth2 REST Web API";
+
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+}
+
+<br />
+<br />
+
+<p><strong> Access Token Sample Application </strong> </p>
+
+
+<div id="txtaccessToken">
+
+
+</div>
+<br>
+<br>
+
+<div>
+    <span id="getData"></span>
+    <br />
+    <br />
+
+
+    <input type="button" value="GetData" id="btnGetData" />
+</div>
+
+
+<script src="~/Scripts/jquery-3.3.1.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        alert(' JQuery Loaded ready called');
+
+        var obj = {};
+        obj.userName = 'admin';
+        obj.password = 'adminpass';
+        obj.grant_type = 'password';
+
+/*
+        var settings = {
+            'cache': false,
+            'dataType': "jsonp",
+            "async": true,
+            "crossDomain": true,
+            "url": "https://maps.googleapis.com/maps/api/distancematrix/json?units=metric&origins=place_id:" + me.originPlaceId + "&destinations=place_id:" + me.destinationPlaceId + "&region=ng&units=metric&key=mykey",
+            "method": "GET",
+            "headers": {
+                "accept": "application/json",
+                "Access-Control-Allow-Origin": "*"
+            }
+        }
+*/
+     /*   $.ajax(settings).done(function (response) {
+            console.log(response);
+
+        });
+        */
+
+        $.ajax({
+            //url: 'http://localhost/webApiToken/token',
+            url: 'http://localhost:3097/token',
+            //url: '@System.Configuration.ConfigurationManager.AppSettings["tokenurl"].ToString()' + "token",
+            //crossDomain: true,
+            type: 'POST',
+            data: JSON.stringify(obj),
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+            success: function (data) {
+                $('#txtaccessToken').text(data.access_token);
+                //$('#txtTest').val(data[0])
+            },
+            error: function (error) {
+                alert(error);
+            }
+        });
+
+
+
+        $('#btnGetData').click(function () {
+            //// server  
+            $.ajax({
+
+                alert("On #btn");
+                //url: "http://localhost/webApiToken/api/WebApi",
+                //url: "http://localhost:3097/api/WebApi",
+                url: '@System.Configuration.ConfigurationManager.AppSettings["url"].ToString()' + "WebApi",
+                headers: { "Authorization": 'bearer ' + $('#txtaccessToken').text() },
+                type: 'GET',
+                crossDomain: true,
+                // Fetch the stored token from localStorage and set in the header
+                headers: {
+                    "Authorization": 'bearer ' + $('#txtaccessToken').text(),
+
+                },
+
+
+                contentType: 'application/json',
+                success: function (data) {
+                    $('#getData').html(data[0]);
+                },
+                error: function (error) {
+                    alert(error);
+                    //debugger;
+                }
+
+
+            });
+
+        })
+
+    });
+
+
+
+</script>
